@@ -18,8 +18,10 @@ import javax.swing.JOptionPane;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.table.DefaultTableModel;
 
+import dao.BFPlanDao;
 import dao.PlanDao;
 import dao.ShipDao;
+import util.JTxtFldUtil;
 import util.MySqlUtil;
 import util.StringUtil;
 
@@ -38,7 +40,8 @@ public class TimetableSearchInterFrm extends JInternalFrame {
 	private JRadioButton ydsRdButton;
 	private JRadioButton bfRdButton;
 	private MySqlUtil mySqlUtil = new MySqlUtil();
-	private PlanDao planDao = new PlanDao();
+	private PlanDao ydsplanDao = new PlanDao();
+	private BFPlanDao bfplanDao = new BFPlanDao();
 	private ShipDao shipDao = new ShipDao();
 
 	/**
@@ -70,12 +73,15 @@ public class TimetableSearchInterFrm extends JInternalFrame {
 		JLabel lblNewLabel = new JLabel("生效日期：");
 		
 		validDateTxt = new JTextField();
+		validDateTxt.addFocusListener(new JTxtFldUtil(validDateTxt, "2020-01-01"));
 		validDateTxt.setColumns(10);
 		
 		JLabel lblNewLabel_1 = new JLabel("查询日期：");
 		
+		
 		searchDateTxt = new JTextField();
 		searchDateTxt.setColumns(10);
+		searchDateTxt.addFocusListener(new JTxtFldUtil(searchDateTxt, "2020-01-01"));
 		
 		JLabel lblNewLabel_2 = new JLabel("查询站点：");
 		
@@ -173,7 +179,7 @@ public class TimetableSearchInterFrm extends JInternalFrame {
 			JOptionPane.showMessageDialog(null, "查询时间不能为空！");
 		}
 		//判断格式
-		// 创建SimpleDateFormat类型对象、 "yyyy-MM-dd HH:ss:mm.SSS"是正则式，分别表示年月日时分秒毫秒
+		// 创建SimpleDateFormat类型对象、 "yyyy-MM-dd HH:mm:ss.SSS"是正则式，分别表示年月日时分秒毫秒
 		SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd");
 		df.setLenient(false);
 		try {
@@ -195,10 +201,12 @@ public class TimetableSearchInterFrm extends JInternalFrame {
 		Connection con = null;
 		try {
 			con = mySqlUtil.getCon();
-			String[] planArr = planDao.planArr(con);
+			String[] ydsplanArr = ydsplanDao.planArr(con);
+			String[] bfplanArr = bfplanDao.planArr(con);
 			String[] shipArr = shipDao.shipArr(con);
 			int shipNum = shipArr.length;
-			int planNum = planArr.length;
+			int ydsplanNum = ydsplanArr.length;
+			int bfplanNum = bfplanArr.length;
 			
 			// 船只轮换
 			String[] shipCopyArr = new String[shipNum];
@@ -212,33 +220,29 @@ public class TimetableSearchInterFrm extends JInternalFrame {
 				}
 			}
 			
-			// TODO 站点选择
-			String[] bfPlanArr = new String[planNum];
-			if(bfRdButton.isSelected()) {
-				SimpleDateFormat df=new SimpleDateFormat("HH:mm:ss");
-				Date[] bfPlan= new Date[planNum]; 
-				long timeDiff = 20*1000*60;
-				for(int i=0; i<planNum; i++) {
-					Date ydsDate = df.parse(planArr[i]); 
-					Date bfdate = new Date(ydsDate.getTime() + timeDiff);//20min后的时间
-					bfPlan[i] = bfdate;
-					bfPlanArr[i] = df.format(bfPlan[i]);
-				}
-			}
-			
-
-			// 填充表格
-			for(int j=0; j < planNum; j+=shipNum) {
-				for(int i = 0; i < shipNum; i++) {
-					if(j+i<planNum) {
-						Vector<String> v = new Vector<String>();
-						v.add(shipCopyArr[i]);
-						if(bfRdButton.isSelected()) {
-							v.add(bfPlanArr[j+i]);
-						}else {
-							v.add(planArr[j+i]);
+			// 站点选择
+			if(ydsRdButton.isSelected()) {
+				// 填充表格
+				for(int j=0; j < ydsplanNum; j+=shipNum) {
+					for(int i = 0; i < shipNum; i++) {
+						if(j+i<ydsplanNum) {
+							Vector<String> v = new Vector<String>();
+							v.add(shipCopyArr[i]);
+							v.add(ydsplanArr[j+i]);
+							dtm.addRow(v);
 						}
-						dtm.addRow(v);
+					}
+				}
+			}else {
+				// 填充表格
+				for(int j=0; j < bfplanNum; j+=shipNum) {
+					for(int i = 0; i < shipNum; i++) {
+						if(j+i<bfplanNum) {
+							Vector<String> v = new Vector<String>();
+							v.add(shipCopyArr[i]);
+							v.add(bfplanArr[j+i]);
+							dtm.addRow(v);
+						}
 					}
 				}
 			}

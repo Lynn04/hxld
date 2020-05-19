@@ -63,13 +63,21 @@ public class MainFrm extends JFrame {
 		});
 		timetableMenu.add(timetableSearchItem);
 		
-		JMenuItem timetableManegeItem = new JMenuItem("班次维护");
+		JMenuItem timetableManegeItem = new JMenuItem("鸭蛋山班次维护");
 		timetableManegeItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				timetableSetActionPerformed(e);
 			}
 		});
 		timetableMenu.add(timetableManegeItem);
+		
+		JMenuItem mntmNewMenuItem_2 = new JMenuItem("白峰班次维护");
+		mntmNewMenuItem_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				bftimetableSetActionPerformed(e);
+			}
+		});
+		timetableMenu.add(mntmNewMenuItem_2);
 		
 		
 		JMenu mnNewMenu = new JMenu("船只管理");
@@ -111,6 +119,13 @@ public class MainFrm extends JFrame {
 		contentPane.add(desktopPane, BorderLayout.CENTER);
 	}
 
+	private void bftimetableSetActionPerformed(ActionEvent evt) {
+		BFTimetableManageInterFrm timetableManageInterFrm = new BFTimetableManageInterFrm();
+		timetableManageInterFrm.setVisible(true);
+		desktopPane.add(timetableManageInterFrm);
+		
+	}
+
 	private void planSearchActionPerformed(ActionEvent evt) {
 		TimetableSearchInterFrm timetableSearchInterFrm = new TimetableSearchInterFrm();
 		timetableSearchInterFrm.setVisible(true);
@@ -137,5 +152,4 @@ public class MainFrm extends JFrame {
 			dispose();
 		}
 	}
-
 }

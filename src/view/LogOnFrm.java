@@ -23,6 +23,8 @@ import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class LogOnFrm extends JFrame {
 
@@ -30,6 +32,7 @@ public class LogOnFrm extends JFrame {
 	private JPanel contentPane;
 	private JTextField userNameTxt;
 	private JPasswordField passwordTxt;
+	private JButton logOnButton;
 	
 	private MySqlUtil mySqlUtil;
 	private UserDao userDao;
@@ -55,14 +58,14 @@ public class LogOnFrm extends JFrame {
 	 */
 	public LogOnFrm() {
 		setResizable(false);
-		setTitle("航班管理系统");
+		setTitle("班次管理系统");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		
-		JLabel lblNewLabel = new JLabel("航班管理系统");
+		JLabel lblNewLabel = new JLabel("班次管理系统");
 		lblNewLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 20));
 		
 		JLabel lblNewLabel_1 = new JLabel("用户名：");
@@ -70,12 +73,31 @@ public class LogOnFrm extends JFrame {
 		JLabel lblNewLabel_2 = new JLabel("密码：");
 		
 		userNameTxt = new JTextField();
+		userNameTxt.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.getKeyCode()==KeyEvent.VK_ENTER){//Key.getCode()是返回当前按钮的数值
+					//logOnButton.requestFocusInWindow();//在密码输入后按enter会触发登录按钮
+					logOnButton.doClick();
+				}
+			}
+		});
 		userNameTxt.setColumns(10);
 		
 		passwordTxt = new JPasswordField();
+		passwordTxt.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.getKeyCode()==KeyEvent.VK_ENTER){//Key.getCode()是返回当前按钮的数值
+					//logOnButton.requestFocusInWindow();//在密码输入后按enter会触发登录按钮
+					logOnButton.doClick();
+				}
+			}
+		});
 		
-		JButton btnNewButton = new JButton("登录");
-		btnNewButton.addActionListener(new ActionListener() {
+		
+		logOnButton = new JButton("登录");
+		logOnButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				loginActionPerformed(e);
 			}
@@ -106,7 +128,7 @@ public class LogOnFrm extends JFrame {
 					.addGap(153))
 				.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
 					.addContainerGap(150, Short.MAX_VALUE)
-					.addComponent(btnNewButton)
+					.addComponent(logOnButton)
 					.addGap(18)
 					.addComponent(btnNewButton_1)
 					.addGap(122))
@@ -126,7 +148,7 @@ public class LogOnFrm extends JFrame {
 						.addComponent(lblNewLabel_2))
 					.addGap(28)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-						.addComponent(btnNewButton)
+						.addComponent(logOnButton)
 						.addComponent(btnNewButton_1))
 					.addContainerGap(41, Short.MAX_VALUE))
 		);
